@@ -1,0 +1,41 @@
+# Project-specific
+.local-research/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+build/
+out/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python (if applicable)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Testing
+coverage/
+.nyc_output/
