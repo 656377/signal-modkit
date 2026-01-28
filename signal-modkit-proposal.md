@@ -31,6 +31,58 @@ Signal is excellent for private communication, but it wasn't built for managing 
 
 ---
 
+## What a Signal Bot Can and Can't Do
+
+Before suggesting features or workflows, it helps to understand what's technically possible. Signal wasn't designed for bots, so there are hard limits.
+
+### ✅ The Bot CAN
+
+| Capability | Notes |
+|------------|-------|
+| **Send messages** | To individuals or groups (with rate limits — see "Spam Detection Risk") |
+| **Receive messages** | Both private DMs and group messages |
+| **Send photos and files** | As attachments |
+| **Add people to groups** | If the bot is a group admin |
+| **Remove people from groups** | Kick or ban (if admin) |
+| **React to messages** | Add emoji reactions (✅, ⚠️, etc.) |
+| **Edit its own messages** | Within ~24 hours of sending |
+| **Delete its own messages** | Within ~24 hours of sending |
+| **See who sent a message** | Name/number of sender |
+| **See group membership** | Who's currently in a group |
+
+### ❌ The Bot CANNOT
+
+| Limitation | Why It Matters |
+|------------|----------------|
+| **Delete other people's messages** | If someone posts something harmful, the bot can't remove it — only admins (manually in the app) or the sender can. This is a fundamental Signal design choice. |
+| **Edit other people's messages** | Same reason. |
+| **See messages from before it joined** | The bot only sees messages sent after it was added to a group. No access to history. |
+| **Pin messages** | Pinning is a manual action in the Signal app; not available to bots. |
+| **Know if someone read a message** | Read receipts are user-controlled and not exposed to bots. |
+| **Send messages invisibly** | Every message comes from the bot's phone number. Members will see the bot as a participant. |
+| **Work without a phone number** | Signal requires a phone number to register. The bot needs its own dedicated number. |
+| **Make voice or video calls** | Not supported by the underlying tools. |
+| **Guarantee delivery** | If someone's phone is off or they've blocked the bot, messages won't arrive. No way to confirm. |
+| **Bypass rate limits** | If Signal thinks the bot is spamming, it will be throttled or banned. No way around this. |
+
+### ⚠️ The Bot CAN, But With Caveats
+
+| Capability | Caveat |
+|------------|--------|
+| **Create groups** | Technically possible, but the bot would be the only admin initially. Usually better to create groups manually. |
+| **Change group settings** | Can change name, photo, and permissions if admin — but doing this automatically is rarely needed and could confuse members. |
+| **Use disappearing messages** | Supported, but complicates report archives and verification workflows. Not recommended for alerts channels. |
+| **Send to many people at once** | Possible, but triggers spam detection. Must be spread out over time with delays. |
+
+### What This Means in Practice
+
+- **The bot is a helper, not a moderator.** It can alert humans and automate simple tasks, but it can't take most moderation actions (like deleting problematic messages).
+- **Speed is limited.** The bot deliberately works slowly to avoid being banned. Don't expect instant responses during high-traffic moments.
+- **The bot is visible.** Members will see the bot as a group member. It's not invisible infrastructure — it's a participant with a phone number.
+- **Some things need human action.** Pinning important messages, deleting others' content, and handling edge cases all require a human admin in the Signal app.
+
+---
+
 ## How It Works
 
 ### 1. New Member Onboarding
