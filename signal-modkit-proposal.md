@@ -289,16 +289,18 @@ The bot deliberately acts "human-like":
 
 **Infrastructure:**
 - Acquire a server to run the bot (see "Server Security" above)
-- Get a dedicated phone number for the bot (prepaid SIM or online service)
+- Get two dedicated phone numbers for the bot:
+  - **Primary** — handles all normal operations
+  - **Fallback** — for failure alerts + manual failover backup
 - Create a Mistral AI account and API key — this is the AI service that helps structure reports. Mistral is hosted in the EU with zero data retention (your reports are not stored or logged).
 
 **Signal configuration:**
-- Register the phone number with Signal
+- Register both phone numbers with Signal
 - Create the groups:
   - **Main group** — where members chat
   - **Alerts channel** — set to "announcement-only" so only bot/admins can post
   - *(Optional)* A discussion channel if you want alerts discussion separate from general chat
-- Add the bot as an admin to both groups
+- Add both bot accounts as admin to both groups
 - Configure the rules text and admin list
 
 ### Ongoing
@@ -310,6 +312,58 @@ The bot deliberately acts "human-like":
 ### Not Required
 - No technical knowledge needed for day-to-day use
 - Verification and merging are simple text commands sent to the bot
+
+---
+
+## Reliability and Failure Detection
+
+### What the Bot Can Detect
+
+If something goes wrong with Signal, the bot can detect most problems and immediately alert admins:
+
+| Problem | Detected? | What Happens |
+|---------|-----------|--------------|
+| Rate limit (sending too fast) | ✅ Yes | Bot pauses, alerts admins |
+| CAPTCHA challenge | ✅ Yes | Bot stops, alerts admins (human must solve) |
+| Account ban | ✅ Yes | All operations fail, admins alerted |
+| Bot crashes | ✅ Yes | Standard server monitoring can catch this |
+| Silent throttling | ❌ No | Messages appear to send but don't arrive |
+
+### How Admins Get Alerted
+
+If the primary bot account can't send messages, how does it alert anyone?
+
+**Solution: A second Signal account just for alerts.**
+
+The bot runs two Signal accounts:
+- **Primary account** — handles all normal operations (onboarding, reports, etc.)
+- **Fallback account** — sits idle, only used to alert admins when primary fails
+
+```
+Primary fails → Fallback sends alert to admins
+```
+
+This works because rate limits and bans are account-specific, not server-wide. The fallback account is unaffected by the primary's problems.
+
+The fallback account doubles as the **manual failover backup** — if needed, operators can switch the bot to use this account as the new primary.
+
+### Silent Throttling
+
+The one edge case the bot *cannot* detect is "silent throttling" — where Signal accepts messages but doesn't deliver them. This is probably rare, but if it happens:
+
+- Admins and members will notice reports aren't appearing
+- Operator manually investigates and switches to fallback if needed
+
+### v1 Approach
+
+1. **Two Signal accounts** — Primary for operations, fallback for alerts
+2. **Automatic alerts** — Fallback account notifies admins immediately when primary has issues
+3. **Manual failover** — If something goes wrong, operator switches to fallback as new primary
+4. **Optional backup channels** — Email or webhook alerting can be configured as additional fallback
+
+### Future Enhancement
+
+For groups that need higher reliability, automatic failover with two active bots could be implemented later. This would require shared database infrastructure and adds significant complexity — not planned for v1.
 
 ---
 
